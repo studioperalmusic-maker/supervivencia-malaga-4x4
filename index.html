@@ -1,84 +1,388 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <title>SUPERVIVENCIA MÁLAGA 4X4</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101713;color:white;font-family:Arial,sans-serif;text-align:center}
-main{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(#0007,#000d),url('wide_cinematic_promotional_poster_game_splash_scre.png') center/cover}
-.pantalla{width:100%;max-width:520px;background:#07120bcc;padding:25px 18px;border:1px solid #b08a45;border-radius:16px}
-h1{color:#ffd16a;text-shadow:2px 3px 6px #000;font-size:27px}
-h2{color:#f3d5a1}
-p{line-height:1.5}
-button{display:block;width:100%;margin:12px 0;background:#d79b36;color:#17130c;padding:16px;border:0;border-radius:9px;font-size:17px;font-weight:bold;cursor:pointer}
-button.secundario{background:#34483d;color:white}
-.vehiculo{background:#17291d;border:2px solid #63735d;padding:16px;margin:12px 0;border-radius:12px;cursor:pointer;text-align:left}
-.vehiculo.elegido{border-color:#ffd16a;background:#34432c}
-.vehiculo strong{display:block;font-size:19px;color:#ffd16a}
-.vehiculo small{display:block;margin-top:8px;color:#e3e3e3}
-.oculto{display:none}
-#mensaje{color:#ffd16a;font-weight:bold}
+body{margin:0;background:#101b15;color:white;font-family:Arial;text-align:center}
+main{max-width:650px;margin:auto;padding:12px}
+h1{color:#ffd06e;font-size:25px}
+h2{color:#ffd06e;font-size:19px}
+section{background:#172a20;border-radius:15px;padding:16px;margin-bottom:12px}
+button{background:#d8a047;color:#171717;border:0;border-radius:9px;padding:14px;font-weight:bold;font-size:15px;touch-action:none}
+button:disabled{opacity:.4}
+.hide{display:none}
+#home{min-height:90vh;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(#0006,#000c),url("wide_cinematic_promotional_poster_game_splash_scre.png") center/cover}
+#home button{margin:8px}
+.car{padding:20px;border:2px solid #667c65;border-radius:12px;margin:12px 0;background:#263d2e}
+.car.active{border-color:#ffd06e}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
+.stat{background:#304637;padding:10px;border-radius:8px}
+.stat b{color:#ffd06e}
+canvas{width:100%;background:#416b45;border-radius:10px;touch-action:none}
+.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.controls button{font-size:25px;min-height:65px}
+.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+#journal{text-align:left;font-size:13px;max-height:150px;overflow:auto}
 </style>
 </head>
 <body>
 <main>
-<section id="inicio" class="pantalla">
+
+<section id="home">
 <h1>SUPERVIVENCIA MÁLAGA 4X4</h1>
 <h2>OPERACIÓN SUPERVIVENCIA</h2>
-<p>Dos todoterrenos. Una misión. Sobrevive en Málaga.</p>
-<button onclick="mostrar('seleccion')">INICIAR AVENTURA</button>
+<p>EL SEXMO · CÁRTAMA · ÁLORA</p>
+<button onclick="show('select')">INICIAR AVENTURA</button>
+<button onclick="loadGame()">CONTINUAR PARTIDA</button>
 </section>
 
-<section id="seleccion" class="pantalla oculto">
-<h1>ELIGE TU 4X4</h1>
-<p>Selecciona el vehículo con el que quieres comenzar.</p>
-<div id="suzuki" class="vehiculo" onclick="elegir('suzuki')">
-<strong>🚙 Suzuki Grand Vitara</strong>
-<small>1.9 DDiS · Diésel · Tracción 4x4</small>
+<section id="select" class="hide">
+<h1>ELIGE TU TODOTERRENO</h1>
+<div class="car" id="suzuki" onclick="choose('suzuki')">
+<h2>🚙 SUZUKI GRAND VITARA</h2>
+<p>1.9 DDiS · Aquaman</p>
 </div>
-<div id="nissan" class="vehiculo" onclick="elegir('nissan')">
-<strong>🚙 Nissan Terrano II</strong>
-<small>Todoterreno · Tracción 4x4</small>
+<div class="car" id="nissan" onclick="choose('nissan')">
+<h2>🚙 NISSAN TERRANO II</h2>
+<p>4X4 · KB Prepper</p>
 </div>
-<p id="mensaje">Todavía no has elegido vehículo.</p>
-<button onclick="comenzar()">CONFIRMAR VEHÍCULO</button>
-<button class="secundario" onclick="mostrar('inicio')">VOLVER</button>
+<p id="choice">Selecciona un vehículo</p>
+<button onclick="start()">CONFIRMAR VEHÍCULO</button>
+<button onclick="show('home')">VOLVER</button>
 </section>
 
-<section id="mision" class="pantalla oculto">
-<h1>OPERACIÓN SUPERVIVENCIA</h1>
-<h2>MISIÓN 1: PREPARAR LA SALIDA</h2>
-<p>📍 Málaga</p>
-<p id="vehiculoActual"></p>
-<p>Revisa combustible, herramientas, agua y provisiones antes de salir hacia el campo.</p>
-<button onclick="completar()">REVISAR SUMINISTROS</button>
-<p id="resultado"></p>
-<button class="secundario" onclick="mostrar('seleccion')">CAMBIAR VEHÍCULO</button>
+<section id="review" class="hide">
+<h1>MISIÓN 1 · REVISIÓN</h1>
+<p>Prepara el vehículo antes de salir de El Sexmo.</p>
+<div style="text-align:left;line-height:2.5">
+<label><input type="checkbox" class="check"> Agua potable</label><hr>
+<label><input type="checkbox" class="check"> Comida y provisiones</label><hr>
+<label><input type="checkbox" class="check"> Herramientas y gato</label><hr>
+<label><input type="checkbox" class="check"> Botiquín y linterna</label><hr>
+<label><input type="checkbox" class="check"> Combustible y neumáticos</label>
+</div>
+<p id="reviewMessage"></p>
+<button onclick="finishReview()">REVISAR SUMINISTROS</button>
 </section>
+
+<section id="game" class="hide">
+<h1>SUPERVIVENCIA MÁLAGA 4X4</h1>
+<h2 id="mission"></h2>
+<div class="grid">
+<div class="stat">🚙 <b id="vehicle"></b></div>
+<div class="stat">📍 <b id="location"></b></div>
+<div class="stat">⛽ <b id="fuel"></b></div>
+<div class="stat">🔧 <b id="health"></b></div>
+<div class="stat">💧 Agua: <b id="water"></b></div>
+<div class="stat">🍞 Comida: <b id="food"></b></div>
+<div class="stat">🛣️ <b id="km"></b></div>
+<div class="stat">⭐ XP: <b id="xp"></b></div>
+<div class="stat">💰 <b id="money"></b></div>
+<div class="stat">🏆 <b id="stage"></b></div>
+</div>
+<p>Sigue la pista de tierra hasta la estrella amarilla.</p>
+<canvas id="map" width="500" height="500"></canvas>
+<div class="controls">
+<div></div><button id="up">▲</button><div></div>
+<button id="left">◀</button>
+<button id="down">▼</button>
+<button id="right">▶</button>
+</div>
+<div class="actions">
+<button onclick="repair()">🔧 REPARAR</button>
+<button onclick="refuel()">⛽ REPOSTAR</button>
+<button onclick="drink()">💧 BEBER</button>
+<button onclick="eat()">🍞 COMER</button>
+<button onclick="inventory()">🎒 INVENTARIO</button>
+<button onclick="save(true)">💾 GUARDAR</button>
+<button onclick="show('home')">🏠 MENÚ</button>
+<button onclick="restart()">🔄 REINICIAR</button>
+</div>
+<h2>DIARIO DE RUTA</h2>
+<div id="journal"></div>
+</section>
+
+<section id="bag" class="hide">
+<h1>🎒 INVENTARIO</h1>
+<div id="bagText"></div>
+<button onclick="show('game')">VOLVER A CONDUCIR</button>
+</section>
+
 </main>
 <script>
-let elegido='';
-function mostrar(id){
-document.querySelectorAll('.pantalla').forEach(p=>p.classList.add('oculto'));
-document.getElementById(id).classList.remove('oculto');
+const $=id=>document.getElementById(id);
+const KEY="malaga4x4_version3";
+const missions=[
+["EL SEXMO · SALIDA","El Sexmo",430,100],
+["RUMBO A CÁRTAMA","Cártama",400,400],
+["PISTAS DEL GUADALHORCE","Guadalhorce",100,110],
+["LLEGADA A ÁLORA","Álora",430,100]
+];
+let selected="",s=null,playing=false,last=0;
+let keys={up:false,down:false,left:false,right:false};
+
+function show(id){
+document.querySelectorAll("main section").forEach(x=>x.classList.add("hide"));
+$(id).classList.remove("hide");
+playing=id==="game";
+if(playing){last=0;requestAnimationFrame(loop);draw();}
 }
-function elegir(id){
-elegido=id;
-document.querySelectorAll('.vehiculo').forEach(v=>v.classList.remove('elegido'));
-document.getElementById(id).classList.add('elegido');
-document.getElementById('mensaje').textContent='Vehículo seleccionado: '+(id==='suzuki'?'Suzuki Grand Vitara':'Nissan Terrano II');
+
+function choose(id){
+selected=id;
+document.querySelectorAll(".car").forEach(x=>x.classList.remove("active"));
+$(id).classList.add("active");
+$("choice").textContent=id==="suzuki"?"Suzuki seleccionado":"Nissan seleccionado";
 }
-function comenzar(){
-if(!elegido){document.getElementById('mensaje').textContent='⚠️ Primero elige un vehículo.';return;}
-document.getElementById('vehiculoActual').textContent='🚙 Tu vehículo: '+(elegido==='suzuki'?'Suzuki Grand Vitara 1.9 DDiS':'Nissan Terrano II');
-document.getElementById('resultado').textContent='';
-mostrar('mision');
+
+function start(){
+if(!selected){$("choice").textContent="Elige un vehículo primero";return;}
+s={
+car:selected,x:75,y:430,a:.5,
+fuel:100,health:100,water:5,food:5,
+parts:3,cans:2,km:0,xp:0,money:100,
+level:0,reviewed:false,events:0,
+log:["Preparando la expedición desde El Sexmo."]
+};
+document.querySelectorAll(".check").forEach(x=>x.checked=false);
+$("reviewMessage").textContent="";
+show("review");
 }
-function completar(){
-document.getElementById('resultado').textContent='✅ Suministros revisados. ¡Preparado para la siguiente misión!';
+
+function finishReview(){
+if(![...document.querySelectorAll(".check")].every(x=>x.checked)){
+$("reviewMessage").textContent="Debes revisar los cinco suministros.";
+return;
 }
+s.reviewed=true;
+s.xp+=25;
+s.money+=30;
+note("✅ Revisión completada. +25 XP y +30 créditos.");
+save(false);
+show("game");
+}
+
+function note(msg){
+s.log.unshift(msg);
+s.log=s.log.slice(0,12);
+}
+
+function save(alertUser){
+if(!s)return;
+try{
+localStorage.setItem(KEY,JSON.stringify(s));
+if(alertUser)alert("Partida guardada correctamente.");
+}catch(e){if(alertUser)alert("No se pudo guardar.");}
+}
+
+function loadGame(){
+try{
+s=JSON.parse(localStorage.getItem(KEY));
+if(!s){alert("Todavía no hay partida guardada.");return;}
+selected=s.car;
+show(s.reviewed?"game":"review");
+}catch(e){alert("No se pudo recuperar la partida.");}
+}
+
+function restart(){
+if(!confirm("¿Reiniciar toda la partida?"))return;
+localStorage.removeItem(KEY);
+s=null;selected="";
+show("home");
+}
+
+function repair(){
+if(s.parts<1){note("No quedan repuestos.");return;}
+if(s.health>=100){note("El motor está perfecto.");return;}
+s.parts--;
+s.health=Math.min(100,s.health+35);
+note("🔧 Motor reparado.");
+save(false);
+}
+
+function refuel(){
+if(s.cans<1){note("No quedan bidones.");return;}
+if(s.fuel>=95){note("Depósito lleno.");return;}
+s.cans--;
+s.fuel=Math.min(100,s.fuel+40);
+note("⛽ Combustible añadido.");
+save(false);
+}
+
+function drink(){
+if(s.water<1){note("No queda agua.");return;}
+s.water--;
+s.health=Math.min(100,s.health+5);
+note("💧 Has bebido agua.");
+save(false);
+}
+
+function eat(){
+if(s.food<1){note("No queda comida.");return;}
+s.food--;
+s.health=Math.min(100,s.health+5);
+note("🍞 Has comido.");
+save(false);
+}
+
+function inventory(){
+$("bagText").innerHTML=
+"<p>💧 Agua: "+s.water+"</p>"+
+"<p>🍞 Comida: "+s.food+"</p>"+
+"<p>🔧 Repuestos: "+s.parts+"</p>"+
+"<p>⛽ Bidones: "+s.cans+"</p>"+
+"<p>💰 Créditos: "+s.money+"</p>";
+show("bag");
+}
+
+function randomEvent(){
+const n=Math.floor(Math.random()*5);
+if(n===0){s.health=Math.max(5,s.health-12);note("⚠️ Baches: daños leves en el motor.");}
+if(n===1){s.parts++;note("🔧 Encuentras repuestos.");}
+if(n===2){s.water++;note("💧 Encuentras agua.");}
+if(n===3){s.money+=25;note("💰 Ayudas a un conductor. +25 créditos.");}
+if(n===4){s.food++;note("🍞 Encuentras provisiones.");}
+}
+
+function complete(){
+const name=missions[s.level][0];
+s.xp+=100;
+s.money+=75;
+s.fuel=Math.min(100,s.fuel+20);
+s.health=Math.min(100,s.health+15);
+note("🏆 Misión completada: "+name);
+s.level++;
+if(s.level<missions.length){
+s.x=75;s.y=430;s.a=.5;
+note("Nueva misión: "+missions[s.level][0]);
+}else{
+note("🏁 ¡HAS LLEGADO A ÁLORA! Campaña completada.");
+}
+save(false);
+}
+
+function draw(){
+if(!s)return;
+const m=missions[Math.min(s.level,3)];
+$("mission").textContent=s.level>=4?"🏆 CAMPAÑA COMPLETADA":m[0];
+$("vehicle").textContent=s.car==="suzuki"?"Grand Vitara":"Terrano II";
+$("location").textContent=s.level>=4?"Álora":m[1];
+$("fuel").textContent=Math.round(s.fuel)+"%";
+$("health").textContent=Math.round(s.health)+"%";
+$("water").textContent=s.water;
+$("food").textContent=s.food;
+$("km").textContent=s.km.toFixed(1)+" km";
+$("xp").textContent=s.xp;
+$("money").textContent=s.money;
+$("stage").textContent=Math.min(s.level+1,5)+"/5";
+$("journal").innerHTML=s.log.map(x=>"<p>"+x+"</p>").join("");
+
+const c=$("map"),g=c.getContext("2d");
+g.fillStyle="#416b45";
+g.fillRect(0,0,500,500);
+
+for(let i=0;i<45;i++){
+const x=(i*113+29)%500,y=(i*179+47)%500;
+g.fillStyle=i%2?"#315a38":"#618449";
+g.beginPath();g.arc(x,y,8+i%4*3,0,Math.PI*2);g.fill();
+}
+
+g.lineCap="round";
+g.lineJoin="round";
+g.beginPath();
+g.moveTo(75,430);
+g.bezierCurveTo(80,240,310,350,260,230);
+g.bezierCurveTo(220,100,360,190,430,100);
+g.strokeStyle="#947653";
+g.lineWidth=65;
+g.stroke();
+g.strokeStyle="#c5aa7c";
+g.lineWidth=51;
+g.stroke();
+
+if(s.level<4){
+g.fillStyle="#ffd33f";
+g.beginPath();
+g.arc(m[2],m[3],20,0,Math.PI*2);
+g.fill();
+g.fillStyle="#302000";
+g.font="24px Arial";
+g.fillText("★",m[2]-13,m[3]+8);
+}
+
+g.save();
+g.translate(s.x,s.y);
+g.rotate(s.a);
+g.fillStyle="#111";
+g.fillRect(-19,-27,10,17);
+g.fillRect(9,-27,10,17);
+g.fillRect(-19,10,10,17);
+g.fillRect(9,10,10,17);
+g.fillStyle=s.car==="suzuki"?"#d4dce0":"#bd9868";
+g.fillRect(-15,-27,30,54);
+g.fillStyle="#203942";
+g.fillRect(-12,-17,24,14);
+g.fillRect(-12,10,24,10);
+g.fillStyle="#fff3b0";
+g.fillRect(-12,-27,9,5);
+g.fillRect(3,-27,9,5);
+g.restore();
+}
+
+function loop(time){
+if(!playing||!s)return;
+if(!last)last=time;
+const dt=Math.min((time-last)/1000,.05);
+last=time;
+
+if((keys.up||keys.down)&&s.fuel>0&&s.health>0){
+const speed=keys.up?70:-40;
+if(keys.left)s.a-=2*dt*(keys.down?-1:1);
+if(keys.right)s.a+=2*dt*(keys.down?-1:1);
+s.x=Math.max(20,Math.min(480,s.x+Math.sin(s.a)*speed*dt));
+s.y=Math.max(20,Math.min(480,s.y-Math.cos(s.a)*speed*dt));
+const d=Math.abs(speed*dt)/120;
+s.km+=d;
+s.fuel=Math.max(0,s.fuel-d*.8);
+
+const step=Math.floor(s.km/2);
+if(step>s.events){
+s.events=step;
+randomEvent();
+save(false);
+}
+
+if(s.level<4){
+const m=missions[s.level];
+if(Math.hypot(s.x-m[2],s.y-m[3])<38)complete();
+}
+}
+draw();
+requestAnimationFrame(loop);
+}
+
+["up","down","left","right"].forEach(id=>{
+const b=$(id);
+b.addEventListener("pointerdown",e=>{
+e.preventDefault();
+keys[id]=true;
+b.setPointerCapture(e.pointerId);
+});
+["pointerup","pointercancel","lostpointercapture"].forEach(ev=>
+b.addEventListener(ev,()=>keys[id]=false));
+});
+
+document.addEventListener("visibilitychange",()=>{
+if(document.hidden){
+Object.keys(keys).forEach(k=>keys[k]=false);
+if(s)save(false);
+}
+});
+setInterval(()=>{if(s&&playing)save(false);},15000);
 </script>
 </body>
 </html>
