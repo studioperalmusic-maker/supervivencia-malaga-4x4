@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SUPERVIVENCIA MÁLAGA 4X4</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080d0a;color:white;font-family:Arial,sans-serif}
+.pantalla{min-height:100dvh;display:flex;align-items:center;justify-content:center;flex-direction:column;background:linear-gradient(to bottom,transparent 45%,#080d0a 100%),url('wide_cinematic_promotional_poster_game_splash_scre.png') center/cover no-repeat;text-align:center;padding:20px}
+button{background:#d8a33b;color:#151515;border:0;border-radius:10px;padding:17px 28px;font-size:18px;font-weight:bold;cursor:pointer;box-shadow:0 4px 20px #0009}
+.panel{display:none;max-width:420px;padding:24px;background:#101b17ee;border:1px solid #b99042;border-radius:16px}
+h1{color:#f2c46b;font-size:28px}
+</style>
+</head>
+<body>
+<main class="pantalla">
+<button id="inicio" onclick="empezar()">INICIAR AVENTURA</button>
+<section id="panel" class="panel">
+<h1>OPERACIÓN SUPERVIVENCIA</h1>
+<p>📍 Málaga. Tu aventura 4x4 comienza aquí.</p>
+<p>🚙 Suzuki Grand Vitara · Nissan Terrano II</p>
+<p>Primera misión: preparar el vehículo y las provisiones.</p>
+<button onclick="volver()">VOLVER</button>
+</section>
+</main>
+<script>
+function empezar(){
+document.getElementById('inicio').style.display='none';
+document.getElementById('panel').style.display='block';
+}
+function volver(){
+document.getElementById('panel').style.display='none';
+document.getElementById('inicio').style.display='block';
+}
+</script>
+</body>
+</html>
