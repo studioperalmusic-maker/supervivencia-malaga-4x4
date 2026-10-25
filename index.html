@@ -6,31 +6,79 @@
 <title>SUPERVIVENCIA MÁLAGA 4X4</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101713;color:white;font-family:Arial;text-align:center}
-main{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:20px;background:linear-gradient(#0005,#000b),url('wide_cinematic_promotional_poster_game_splash_scre.png') center/cover}
-h1{color:#ffd16a;text-shadow:2px 3px 6px #000}
-button{background:#d79b36;color:#17130c;padding:16px 25px;border:0;border-radius:9px;font-size:18px;font-weight:bold}
-#aventura{display:none;background:#000b;padding:25px;border-radius:15px}
+body{margin:0;background:#101713;color:white;font-family:Arial,sans-serif;text-align:center}
+main{min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:20px;background:linear-gradient(#0007,#000d),url('wide_cinematic_promotional_poster_game_splash_scre.png') center/cover}
+.pantalla{width:100%;max-width:520px;background:#07120bcc;padding:25px 18px;border:1px solid #b08a45;border-radius:16px}
+h1{color:#ffd16a;text-shadow:2px 3px 6px #000;font-size:27px}
+h2{color:#f3d5a1}
+p{line-height:1.5}
+button{display:block;width:100%;margin:12px 0;background:#d79b36;color:#17130c;padding:16px;border:0;border-radius:9px;font-size:17px;font-weight:bold;cursor:pointer}
+button.secundario{background:#34483d;color:white}
+.vehiculo{background:#17291d;border:2px solid #63735d;padding:16px;margin:12px 0;border-radius:12px;cursor:pointer;text-align:left}
+.vehiculo.elegido{border-color:#ffd16a;background:#34432c}
+.vehiculo strong{display:block;font-size:19px;color:#ffd16a}
+.vehiculo small{display:block;margin-top:8px;color:#e3e3e3}
+.oculto{display:none}
+#mensaje{color:#ffd16a;font-weight:bold}
 </style>
 </head>
 <body>
 <main>
-<section id="inicio">
+<section id="inicio" class="pantalla">
 <h1>SUPERVIVENCIA MÁLAGA 4X4</h1>
 <h2>OPERACIÓN SUPERVIVENCIA</h2>
-<button onclick="empezar()">INICIAR AVENTURA</button>
+<p>Dos todoterrenos. Una misión. Sobrevive en Málaga.</p>
+<button onclick="mostrar('seleccion')">INICIAR AVENTURA</button>
 </section>
-<section id="aventura">
+
+<section id="seleccion" class="pantalla oculto">
+<h1>ELIGE TU 4X4</h1>
+<p>Selecciona el vehículo con el que quieres comenzar.</p>
+<div id="suzuki" class="vehiculo" onclick="elegir('suzuki')">
+<strong>🚙 Suzuki Grand Vitara</strong>
+<small>1.9 DDiS · Diésel · Tracción 4x4</small>
+</div>
+<div id="nissan" class="vehiculo" onclick="elegir('nissan')">
+<strong>🚙 Nissan Terrano II</strong>
+<small>Todoterreno · Tracción 4x4</small>
+</div>
+<p id="mensaje">Todavía no has elegido vehículo.</p>
+<button onclick="comenzar()">CONFIRMAR VEHÍCULO</button>
+<button class="secundario" onclick="mostrar('inicio')">VOLVER</button>
+</section>
+
+<section id="mision" class="pantalla oculto">
 <h1>OPERACIÓN SUPERVIVENCIA</h1>
-<p>📍 Málaga — Comienza tu aventura.</p>
-<p>🚙 Suzuki Grand Vitara y Nissan Terrano II</p>
-<p>Primera misión: preparar el vehículo y sus suministros.</p>
-<button onclick="volver()">VOLVER</button>
+<h2>MISIÓN 1: PREPARAR LA SALIDA</h2>
+<p>📍 Málaga</p>
+<p id="vehiculoActual"></p>
+<p>Revisa combustible, herramientas, agua y provisiones antes de salir hacia el campo.</p>
+<button onclick="completar()">REVISAR SUMINISTROS</button>
+<p id="resultado"></p>
+<button class="secundario" onclick="mostrar('seleccion')">CAMBIAR VEHÍCULO</button>
 </section>
 </main>
 <script>
-function empezar(){document.getElementById('inicio').style.display='none';document.getElementById('aventura').style.display='block'}
-function volver(){document.getElementById('aventura').style.display='none';document.getElementById('inicio').style.display='block'}
+let elegido='';
+function mostrar(id){
+document.querySelectorAll('.pantalla').forEach(p=>p.classList.add('oculto'));
+document.getElementById(id).classList.remove('oculto');
+}
+function elegir(id){
+elegido=id;
+document.querySelectorAll('.vehiculo').forEach(v=>v.classList.remove('elegido'));
+document.getElementById(id).classList.add('elegido');
+document.getElementById('mensaje').textContent='Vehículo seleccionado: '+(id==='suzuki'?'Suzuki Grand Vitara':'Nissan Terrano II');
+}
+function comenzar(){
+if(!elegido){document.getElementById('mensaje').textContent='⚠️ Primero elige un vehículo.';return;}
+document.getElementById('vehiculoActual').textContent='🚙 Tu vehículo: '+(elegido==='suzuki'?'Suzuki Grand Vitara 1.9 DDiS':'Nissan Terrano II');
+document.getElementById('resultado').textContent='';
+mostrar('mision');
+}
+function completar(){
+document.getElementById('resultado').textContent='✅ Suministros revisados. ¡Preparado para la siguiente misión!';
+}
 </script>
 </body>
 </html>
