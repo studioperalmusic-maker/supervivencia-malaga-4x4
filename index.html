@@ -1,388 +1,416 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SUPERVIVENCIA MÁLAGA 4X4</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>SUPERVIVENCIA MÁLAGA 4X4 V4</title>
 <style>
 *{box-sizing:border-box}
-body{margin:0;background:#101b15;color:white;font-family:Arial;text-align:center}
-main{max-width:650px;margin:auto;padding:12px}
-h1{color:#ffd06e;font-size:25px}
-h2{color:#ffd06e;font-size:19px}
-section{background:#172a20;border-radius:15px;padding:16px;margin-bottom:12px}
-button{background:#d8a047;color:#171717;border:0;border-radius:9px;padding:14px;font-weight:bold;font-size:15px;touch-action:none}
-button:disabled{opacity:.4}
-.hide{display:none}
-#home{min-height:90vh;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(#0006,#000c),url("wide_cinematic_promotional_poster_game_splash_scre.png") center/cover}
-#home button{margin:8px}
-.car{padding:20px;border:2px solid #667c65;border-radius:12px;margin:12px 0;background:#263d2e}
-.car.active{border-color:#ffd06e}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-.stat{background:#304637;padding:10px;border-radius:8px}
-.stat b{color:#ffd06e}
-canvas{width:100%;background:#416b45;border-radius:10px;touch-action:none}
-.controls{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.controls button{font-size:25px;min-height:65px}
-.actions{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
-#journal{text-align:left;font-size:13px;max-height:150px;overflow:auto}
+body{margin:0;background:#101d17;color:#f5f0e4;font-family:system-ui,Arial;text-align:center}
+main{max-width:800px;margin:auto;padding:12px}
+h1{font-size:clamp(22px,5vw,34px);color:#efbd60}
+h2{color:#efbd60}
+.hide{display:none!important}
+section{border:1px solid #4e7158;border-radius:15px;padding:16px;margin:12px 0;background:#1a3024}
+button{background:#d8a44d;color:#1a170d;border:0;border-radius:11px;padding:14px;font-weight:800;font-size:16px;margin:5px;touch-action:none;cursor:pointer}
+button.secondary{background:#355443;color:white}
+.choice{border:2px solid #64765a;padding:17px;border-radius:12px;margin:10px;cursor:pointer}
+.choice.on{border-color:#ffd278;background:#405239}
+.answers{display:grid;gap:9px}
+.answers button{width:100%;margin:0;text-align:left}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.stats div{background:#2b4734;border-radius:8px;padding:10px 4px;font-size:12px}
+.stats b{display:block;color:#f3c46b;font-size:16px}
+canvas{width:100%;display:block;aspect-ratio:16/10;background:#81b5d0;border-radius:12px;touch-action:none}
+.pad{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:10px 0}
+.pad button{margin:0;min-height:66px;font-size:20px;user-select:none;-webkit-user-select:none}
+#home{min-height:85dvh;display:flex;flex-direction:column;justify-content:center;background:linear-gradient(#0009,#000d),url('wide_cinematic_promotional_poster_game_splash_scre.png') center/cover}
+#home button{max-width:400px;align-self:center;width:100%}
+small{color:#b9c9bc}
+#feedback{min-height:48px;color:#ffcf75;font-weight:700}
+#stage{color:#efbd60;font-weight:800}
+#message{color:#f7d48e;min-height:30px}
+footer{font-size:12px;color:#b9c9bc;padding:15px}
 </style>
 </head>
 <body>
 <main>
-
 <section id="home">
-<h1>SUPERVIVENCIA MÁLAGA 4X4</h1>
-<h2>OPERACIÓN SUPERVIVENCIA</h2>
-<p>EL SEXMO · CÁRTAMA · ÁLORA</p>
-<button onclick="show('select')">INICIAR AVENTURA</button>
-<button onclick="loadGame()">CONTINUAR PARTIDA</button>
+<h1>⛰️ SUPERVIVENCIA MÁLAGA 4X4</h1>
+<h2>VERSIÓN 4 · DESAFÍO Y CONDUCCIÓN</h2>
+<p>Preguntas de supervivencia → conducción 3D estilizada → siguiente misión.</p>
+<button onclick="openSelect()">🚙 NUEVA AVENTURA</button>
+<button class="secondary" onclick="continueGame()">▶ CONTINUAR</button>
 </section>
 
 <section id="select" class="hide">
 <h1>ELIGE TU TODOTERRENO</h1>
-<div class="car" id="suzuki" onclick="choose('suzuki')">
-<h2>🚙 SUZUKI GRAND VITARA</h2>
+<div class="choice on" id="suzuki" onclick="choose('suzuki')">
+🚙 <b>SUZUKI GRAND VITARA</b>
 <p>1.9 DDiS · Aquaman</p>
 </div>
-<div class="car" id="nissan" onclick="choose('nissan')">
-<h2>🚙 NISSAN TERRANO II</h2>
-<p>4X4 · KB Prepper</p>
+<div class="choice" id="nissan" onclick="choose('nissan')">
+🚙 <b>NISSAN TERRANO II</b>
+<p>KB Prepper</p>
 </div>
-<p id="choice">Selecciona un vehículo</p>
-<button onclick="start()">CONFIRMAR VEHÍCULO</button>
-<button onclick="show('home')">VOLVER</button>
+<button onclick="start()">COMENZAR</button>
+<button class="secondary" onclick="show('home')">VOLVER</button>
 </section>
 
-<section id="review" class="hide">
-<h1>MISIÓN 1 · REVISIÓN</h1>
-<p>Prepara el vehículo antes de salir de El Sexmo.</p>
-<div style="text-align:left;line-height:2.5">
-<label><input type="checkbox" class="check"> Agua potable</label><hr>
-<label><input type="checkbox" class="check"> Comida y provisiones</label><hr>
-<label><input type="checkbox" class="check"> Herramientas y gato</label><hr>
-<label><input type="checkbox" class="check"> Botiquín y linterna</label><hr>
-<label><input type="checkbox" class="check"> Combustible y neumáticos</label>
-</div>
-<p id="reviewMessage"></p>
-<button onclick="finishReview()">REVISAR SUMINISTROS</button>
+<section id="quiz" class="hide">
+<div id="stage"></div>
+<h1 id="question"></h1>
+<p id="qcount"></p>
+<div id="answers" class="answers"></div>
+<p id="feedback"></p>
+<button id="next" class="hide" onclick="nextQuestion()">SIGUIENTE PREGUNTA ▶</button>
 </section>
 
-<section id="game" class="hide">
-<h1>SUPERVIVENCIA MÁLAGA 4X4</h1>
-<h2 id="mission"></h2>
-<div class="grid">
-<div class="stat">🚙 <b id="vehicle"></b></div>
-<div class="stat">📍 <b id="location"></b></div>
-<div class="stat">⛽ <b id="fuel"></b></div>
-<div class="stat">🔧 <b id="health"></b></div>
-<div class="stat">💧 Agua: <b id="water"></b></div>
-<div class="stat">🍞 Comida: <b id="food"></b></div>
-<div class="stat">🛣️ <b id="km"></b></div>
-<div class="stat">⭐ XP: <b id="xp"></b></div>
-<div class="stat">💰 <b id="money"></b></div>
-<div class="stat">🏆 <b id="stage"></b></div>
+<section id="drive" class="hide">
+<h2 id="routeName"></h2>
+<div class="stats">
+<div>⛽ GASOIL<b id="fuel">100%</b></div>
+<div>🔧 MOTOR<b id="health">100%</b></div>
+<div>🛣️ RUTA<b id="progress">0%</b></div>
+<div>⭐ XP<b id="xp">0</b></div>
 </div>
-<p>Sigue la pista de tierra hasta la estrella amarilla.</p>
-<canvas id="map" width="500" height="500"></canvas>
-<div class="controls">
-<div></div><button id="up">▲</button><div></div>
+<p id="message">Conduce hasta el final del camino.</p>
+<canvas id="scene" width="800" height="500"></canvas>
+<div class="pad">
 <button id="left">◀</button>
-<button id="down">▼</button>
+<button id="gas">▲</button>
+<button id="brake">▼</button>
 <button id="right">▶</button>
 </div>
-<div class="actions">
-<button onclick="repair()">🔧 REPARAR</button>
-<button onclick="refuel()">⛽ REPOSTAR</button>
-<button onclick="drink()">💧 BEBER</button>
-<button onclick="eat()">🍞 COMER</button>
-<button onclick="inventory()">🎒 INVENTARIO</button>
-<button onclick="save(true)">💾 GUARDAR</button>
-<button onclick="show('home')">🏠 MENÚ</button>
-<button onclick="restart()">🔄 REINICIAR</button>
-</div>
-<h2>DIARIO DE RUTA</h2>
-<div id="journal"></div>
+<p><small>Mantén ▲ para avanzar y, a la vez, ◀ o ▶ para girar. Vista 3D estilizada.</small></p>
+<button onclick="repair()">🔧 REPARAR (20 XP)</button>
+<button onclick="refuel()">⛽ REPOSTAR (20 XP)</button>
+<button class="secondary" onclick="save(true)">💾 GUARDAR</button>
 </section>
 
-<section id="bag" class="hide">
-<h1>🎒 INVENTARIO</h1>
-<div id="bagText"></div>
-<button onclick="show('game')">VOLVER A CONDUCIR</button>
+<section id="finish" class="hide">
+<h1>🏆 ¡MISIÓN SUPERADA!</h1>
+<p id="finishText"></p>
+<button onclick="advance()">CONTINUAR AVENTURA ▶</button>
 </section>
 
+<section id="end" class="hide">
+<h1>🏁 ¡HAS LLEGADO A ÁLORA!</h1>
+<p>Has completado los cuatro desafíos de supervivencia y conducción.</p>
+<p id="endScore"></p>
+<button onclick="openSelect()">VOLVER A JUGAR</button>
+</section>
+<footer>Ruta ficticia inspirada en El Sexmo, Cártama y Álora. Prototipo jugable con gráficos 3D estilizados mediante Canvas, sin modelos 3D reales.</footer>
 </main>
+
 <script>
-const $=id=>document.getElementById(id);
-const KEY="malaga4x4_version3";
-const missions=[
-["EL SEXMO · SALIDA","El Sexmo",430,100],
-["RUMBO A CÁRTAMA","Cártama",400,400],
-["PISTAS DEL GUADALHORCE","Guadalhorce",100,110],
-["LLEGADA A ÁLORA","Álora",430,100]
+const $=id=>document.getElementById(id),KEY='supervivencia-malaga-v4';
+
+const levels=[
+{name:'EL SEXMO → CÁRTAMA',questions:[
+['Antes de salir al campo, ¿qué debes comprobar?',['Combustible, ruedas y agua','Solo la radio','El color del coche'],0],
+['Si se enciende la luz de temperatura del motor, ¿qué haces?',['Acelerar más','Parar en lugar seguro y revisar','Echar agua fría al motor caliente'],1],
+['¿Qué es útil llevar en una ruta 4x4?',['Botiquín y herramientas','Solo gafas de sol','Nada'],0]
+]},
+{name:'CÁRTAMA → GUADALHORCE',questions:[
+['Si hay un vado con agua y no conoces la profundidad...',['Cruzar rápido','Comprobar seguridad y no cruzar si hay dudas','Seguir al primero sin mirar'],1],
+['En una bajada pronunciada, conviene...',['Controlar la velocidad con marcha adecuada','Poner punto muerto','Frenar bruscamente'],0],
+['¿Qué haces si pierdes cobertura?',['Conservar la calma y usar el plan de ruta','Seguir sin rumbo','Abandonar todo el equipo'],0]
+]},
+{name:'GUADALHORCE → MIRADOR',questions:[
+['Si encuentras un camino cerrado...',['Respetar el cierre','Romper la barrera','Entrar por otro lado'],0],
+['Para evitar daños en una pista con piedras...',['Reducir velocidad y elegir trazada','Acelerar al máximo','Cerrar los ojos'],0],
+['Si alguien se lesiona en la ruta...',['Evaluar seguridad y llamar al 112 si procede','Moverlo siempre de inmediato','Dejarlo solo'],0]
+]},
+{name:'MIRADOR → ÁLORA',questions:[
+['Antes de entrar en una ruta larga...',['Informar del recorrido previsto','Salir sin avisar','Ignorar el tiempo'],0],
+['Con poco combustible, lo correcto es...',['Planificar una salida segura para repostar','Acelerar','Apagar luces y seguir indefinidamente'],0],
+['Al terminar la ruta...',['Revisar vehículo y recoger residuos','Dejar basura','No comprobar nada'],0]
+]}
 ];
-let selected="",s=null,playing=false,last=0;
-let keys={up:false,down:false,left:false,right:false};
+
+let s=null,selected='suzuki';
+let held={left:false,right:false,gas:false,brake:false};
+let last=0,loopActive=false;
 
 function show(id){
-document.querySelectorAll("main section").forEach(x=>x.classList.add("hide"));
-$(id).classList.remove("hide");
-playing=id==="game";
-if(playing){last=0;requestAnimationFrame(loop);draw();}
+document.querySelectorAll('main>section').forEach(x=>x.classList.add('hide'));
+$(id).classList.remove('hide');
+loopActive=id==='drive';
+last=0;
+if(loopActive)requestAnimationFrame(frame);
 }
 
-function choose(id){
-selected=id;
-document.querySelectorAll(".car").forEach(x=>x.classList.remove("active"));
-$(id).classList.add("active");
-$("choice").textContent=id==="suzuki"?"Suzuki seleccionado":"Nissan seleccionado";
+function openSelect(){show('select')}
+
+function choose(c){
+selected=c;
+['suzuki','nissan'].forEach(x=>$(x).classList.toggle('on',x===c));
 }
 
 function start(){
-if(!selected){$("choice").textContent="Elige un vehículo primero";return;}
-s={
-car:selected,x:75,y:430,a:.5,
-fuel:100,health:100,water:5,food:5,
-parts:3,cans:2,km:0,xp:0,money:100,
-level:0,reviewed:false,events:0,
-log:["Preparando la expedición desde El Sexmo."]
-};
-document.querySelectorAll(".check").forEach(x=>x.checked=false);
-$("reviewMessage").textContent="";
-show("review");
-}
-
-function finishReview(){
-if(![...document.querySelectorAll(".check")].every(x=>x.checked)){
-$("reviewMessage").textContent="Debes revisar los cinco suministros.";
-return;
-}
-s.reviewed=true;
-s.xp+=25;
-s.money+=30;
-note("✅ Revisión completada. +25 XP y +30 créditos.");
+s={car:selected,level:0,q:0,correct:0,xp:0,fuel:100,health:100,position:0,lane:0,speed:0,phase:'quiz'};
 save(false);
-show("game");
-}
-
-function note(msg){
-s.log.unshift(msg);
-s.log=s.log.slice(0,12);
+renderQuiz();
 }
 
 function save(alertUser){
-if(!s)return;
 try{
 localStorage.setItem(KEY,JSON.stringify(s));
-if(alertUser)alert("Partida guardada correctamente.");
-}catch(e){if(alertUser)alert("No se pudo guardar.");}
+if(alertUser)alert('Partida guardada');
+}catch(e){
+if(alertUser)alert('No se pudo guardar');
+}
 }
 
-function loadGame(){
+function continueGame(){
 try{
 s=JSON.parse(localStorage.getItem(KEY));
-if(!s){alert("Todavía no hay partida guardada.");return;}
+if(!s||!Number.isInteger(s.level))throw Error();
 selected=s.car;
-show(s.reviewed?"game":"review");
-}catch(e){alert("No se pudo recuperar la partida.");}
+if(s.phase==='quiz')renderQuiz();
+else if(s.phase==='drive')beginDrive(true);
+else if(s.phase==='finish')finishLevel();
+else if(s.phase==='end')endGame();
+else throw Error();
+}catch(e){
+alert('No hay partida guardada todavía');
+}
 }
 
-function restart(){
-if(!confirm("¿Reiniciar toda la partida?"))return;
-localStorage.removeItem(KEY);
-s=null;selected="";
-show("home");
+function renderQuiz(){
+s.phase='quiz';
+show('quiz');
+const l=levels[s.level],q=l.questions[s.q];
+$('stage').textContent='NIVEL '+(s.level+1)+' / 4 · '+l.name;
+$('question').textContent=q[0];
+$('qcount').textContent='Pregunta '+(s.q+1)+' de 3 · Necesitas 2 aciertos';
+$('feedback').textContent='';
+$('next').classList.add('hide');
+$('answers').innerHTML='';
+q[1].forEach((a,i)=>{
+const b=document.createElement('button');
+b.textContent=String.fromCharCode(65+i)+'. '+a;
+b.onclick=()=>answer(i);
+$('answers').append(b);
+});
+save(false);
+}
+
+function answer(i){
+const q=levels[s.level].questions[s.q];
+$('answers').querySelectorAll('button').forEach(b=>b.disabled=true);
+const ok=i===q[2];
+if(ok){s.correct++;s.xp+=20;}
+$('feedback').textContent=ok?'✅ ¡Correcto! +20 XP':'❌ No era esa. Respuesta: '+q[1][q[2]];
+$('next').classList.remove('hide');
+save(false);
+}
+
+function nextQuestion(){
+if(s.q<2){
+s.q++;
+renderQuiz();
+}else if(s.correct>=2){
+beginDrive(false);
+}else{
+s.q=0;
+s.correct=0;
+alert('Necesitas 2 aciertos de 3. Vamos a repetir el desafío.');
+renderQuiz();
+}
+}
+
+function beginDrive(resume){
+s.phase='drive';
+if(!resume){
+s.position=0;
+s.lane=0;
+s.speed=0;
+s.fuel=Math.max(s.fuel,50);
+s.health=Math.max(s.health,50);
+}
+$('routeName').textContent='🚙 '+levels[s.level].name;
+$('message').textContent='¡Ruta desbloqueada! Conduce hasta el 100%.';
+show('drive');
+save(false);
 }
 
 function repair(){
-if(s.parts<1){note("No quedan repuestos.");return;}
-if(s.health>=100){note("El motor está perfecto.");return;}
-s.parts--;
+if(s.xp<20){$('message').textContent='Necesitas 20 XP';return;}
+s.xp-=20;
 s.health=Math.min(100,s.health+35);
-note("🔧 Motor reparado.");
 save(false);
 }
 
 function refuel(){
-if(s.cans<1){note("No quedan bidones.");return;}
-if(s.fuel>=95){note("Depósito lleno.");return;}
-s.cans--;
-s.fuel=Math.min(100,s.fuel+40);
-note("⛽ Combustible añadido.");
+if(s.xp<20){$('message').textContent='Necesitas 20 XP';return;}
+s.xp-=20;
+s.fuel=Math.min(100,s.fuel+35);
 save(false);
 }
 
-function drink(){
-if(s.water<1){note("No queda agua.");return;}
-s.water--;
-s.health=Math.min(100,s.health+5);
-note("💧 Has bebido agua.");
-save(false);
-}
-
-function eat(){
-if(s.food<1){note("No queda comida.");return;}
-s.food--;
-s.health=Math.min(100,s.health+5);
-note("🍞 Has comido.");
-save(false);
-}
-
-function inventory(){
-$("bagText").innerHTML=
-"<p>💧 Agua: "+s.water+"</p>"+
-"<p>🍞 Comida: "+s.food+"</p>"+
-"<p>🔧 Repuestos: "+s.parts+"</p>"+
-"<p>⛽ Bidones: "+s.cans+"</p>"+
-"<p>💰 Créditos: "+s.money+"</p>";
-show("bag");
-}
-
-function randomEvent(){
-const n=Math.floor(Math.random()*5);
-if(n===0){s.health=Math.max(5,s.health-12);note("⚠️ Baches: daños leves en el motor.");}
-if(n===1){s.parts++;note("🔧 Encuentras repuestos.");}
-if(n===2){s.water++;note("💧 Encuentras agua.");}
-if(n===3){s.money+=25;note("💰 Ayudas a un conductor. +25 créditos.");}
-if(n===4){s.food++;note("🍞 Encuentras provisiones.");}
-}
-
-function complete(){
-const name=missions[s.level][0];
-s.xp+=100;
-s.money+=75;
-s.fuel=Math.min(100,s.fuel+20);
-s.health=Math.min(100,s.health+15);
-note("🏆 Misión completada: "+name);
-s.level++;
-if(s.level<missions.length){
-s.x=75;s.y=430;s.a=.5;
-note("Nueva misión: "+missions[s.level][0]);
+function frame(t){
+if(!loopActive||!s)return;
+const dt=Math.min((t-last)/1000||0,.05);
+last=t;
+let speed=s.speed;
+if(held.gas&&s.fuel>0&&s.health>0)speed=Math.min(70,speed+40*dt);
+else speed=Math.max(0,speed-18*dt);
+if(held.brake)speed=Math.max(0,speed-65*dt);
+s.speed=speed;
+if(speed>1){
+s.lane+=((held.right?1:0)-(held.left?1:0))*dt*speed*.012;
+s.lane=Math.max(-2,Math.min(2,s.lane));
+s.position+=speed*dt*.035;
+s.fuel=Math.max(0,s.fuel-speed*dt*.0018);
+if(Math.abs(s.lane)>1.2){
+s.health=Math.max(0,s.health-dt*3);
+$('message').textContent='⚠️ Fuera de pista: vuelve al centro';
 }else{
-note("🏁 ¡HAS LLEGADO A ÁLORA! Campaña completada.");
+$('message').textContent='Mantén el vehículo dentro de la pista.';
 }
-save(false);
+}
+$('fuel').textContent=Math.round(s.fuel)+'%';
+$('health').textContent=Math.round(s.health)+'%';
+$('progress').textContent=Math.min(100,Math.floor(s.position))+'%';
+$('xp').textContent=s.xp;
+draw();
+if(s.position>=100){finishLevel();return;}
+if(s.fuel<=0)$('message').textContent='⛽ Sin combustible: repostar con XP';
+if(s.health<=0)$('message').textContent='🔧 Avería: reparar con XP';
+requestAnimationFrame(frame);
 }
 
 function draw(){
-if(!s)return;
-const m=missions[Math.min(s.level,3)];
-$("mission").textContent=s.level>=4?"🏆 CAMPAÑA COMPLETADA":m[0];
-$("vehicle").textContent=s.car==="suzuki"?"Grand Vitara":"Terrano II";
-$("location").textContent=s.level>=4?"Álora":m[1];
-$("fuel").textContent=Math.round(s.fuel)+"%";
-$("health").textContent=Math.round(s.health)+"%";
-$("water").textContent=s.water;
-$("food").textContent=s.food;
-$("km").textContent=s.km.toFixed(1)+" km";
-$("xp").textContent=s.xp;
-$("money").textContent=s.money;
-$("stage").textContent=Math.min(s.level+1,5)+"/5";
-$("journal").innerHTML=s.log.map(x=>"<p>"+x+"</p>").join("");
-
-const c=$("map"),g=c.getContext("2d");
-g.fillStyle="#416b45";
-g.fillRect(0,0,500,500);
-
-for(let i=0;i<45;i++){
-const x=(i*113+29)%500,y=(i*179+47)%500;
-g.fillStyle=i%2?"#315a38":"#618449";
-g.beginPath();g.arc(x,y,8+i%4*3,0,Math.PI*2);g.fill();
-}
-
-g.lineCap="round";
-g.lineJoin="round";
+const c=$('scene'),g=c.getContext('2d'),W=800,H=500;
+g.clearRect(0,0,W,H);
+let sky=g.createLinearGradient(0,0,0,280);
+sky.addColorStop(0,'#6ca6d3');
+sky.addColorStop(1,'#d9e8dc');
+g.fillStyle=sky;
+g.fillRect(0,0,W,H);
+g.fillStyle='#597a5b';
 g.beginPath();
-g.moveTo(75,430);
-g.bezierCurveTo(80,240,310,350,260,230);
-g.bezierCurveTo(220,100,360,190,430,100);
-g.strokeStyle="#947653";
-g.lineWidth=65;
-g.stroke();
-g.strokeStyle="#c5aa7c";
-g.lineWidth=51;
-g.stroke();
-
-if(s.level<4){
-g.fillStyle="#ffd33f";
-g.beginPath();
-g.arc(m[2],m[3],20,0,Math.PI*2);
+g.moveTo(0,240);
+for(let x=0;x<=800;x+=20)
+g.lineTo(x,225+Math.sin(x/75+s.level)*33+Math.sin(x/31)*9);
+g.lineTo(800,300);
+g.lineTo(0,300);
 g.fill();
-g.fillStyle="#302000";
-g.font="24px Arial";
-g.fillText("★",m[2]-13,m[3]+8);
+g.fillStyle='#5c874c';
+g.fillRect(0,260,800,240);
+
+const bend=Math.sin(s.position/15+s.level)*75;
+g.fillStyle='#aa926b';
+g.beginPath();
+g.moveTo(360+bend,258);
+g.lineTo(440+bend,258);
+g.lineTo(790-s.lane*22,500);
+g.lineTo(10-s.lane*22,500);
+g.closePath();
+g.fill();
+g.strokeStyle='#d5bd8e';
+g.lineWidth=5;
+g.beginPath();
+g.moveTo(360+bend,258);
+g.lineTo(10-s.lane*22,500);
+g.moveTo(440+bend,258);
+g.lineTo(790-s.lane*22,500);
+g.stroke();
+
+for(let i=0;i<12;i++){
+let z=((i*19+s.position*1.8)%100)/100;
+let depth=Math.pow(z,1.6);
+let y=263+depth*260;
+let scale=.3+depth*1.8;
+for(let side of [-1,1]){
+let x=400+side*(65+depth*460)+bend*(1-depth)-s.lane*40;
+g.fillStyle='#59492e';
+g.fillRect(x-4*scale,y-26*scale,8*scale,30*scale);
+g.fillStyle='#2a5a32';
+g.beginPath();
+g.arc(x,y-30*scale,15*scale,0,Math.PI*2);
+g.fill();
+}
 }
 
-g.save();
-g.translate(s.x,s.y);
-g.rotate(s.a);
-g.fillStyle="#111";
-g.fillRect(-19,-27,10,17);
-g.fillRect(9,-27,10,17);
-g.fillRect(-19,10,10,17);
-g.fillRect(9,10,10,17);
-g.fillStyle=s.car==="suzuki"?"#d4dce0":"#bd9868";
-g.fillRect(-15,-27,30,54);
-g.fillStyle="#203942";
-g.fillRect(-12,-17,24,14);
-g.fillRect(-12,10,24,10);
-g.fillStyle="#fff3b0";
-g.fillRect(-12,-27,9,5);
-g.fillRect(3,-27,9,5);
-g.restore();
+let cx=400+s.lane*35,cy=406;
+g.fillStyle='#222';
+g.fillRect(cx-63,cy+4,22,47);
+g.fillRect(cx+41,cy+4,22,47);
+g.fillStyle=s.car==='suzuki'?'#c8d4d8':'#bd9a65';
+g.beginPath();
+g.moveTo(cx-46,cy-36);
+g.lineTo(cx+46,cy-36);
+g.lineTo(cx+56,cy+44);
+g.lineTo(cx-56,cy+44);
+g.closePath();
+g.fill();
+g.fillStyle='#25424b';
+g.beginPath();
+g.moveTo(cx-37,cy-32);
+g.lineTo(cx+37,cy-32);
+g.lineTo(cx+42,cy-3);
+g.lineTo(cx-42,cy-3);
+g.closePath();
+g.fill();
+g.fillStyle='#a62c24';
+g.fillRect(cx-51,cy+22,16,10);
+g.fillRect(cx+35,cy+22,16,10);
+g.fillStyle='#242a25';
+g.fillRect(cx-27,cy+34,54,7);
+g.fillStyle='white';
+g.font='bold 20px system-ui';
+g.fillText('MÁLAGA 4X4',20,32);
+g.font='16px system-ui';
+g.fillText('Vista trasera · 3D estilizado',20,57);
 }
 
-function loop(time){
-if(!playing||!s)return;
-if(!last)last=time;
-const dt=Math.min((time-last)/1000,.05);
-last=time;
-
-if((keys.up||keys.down)&&s.fuel>0&&s.health>0){
-const speed=keys.up?70:-40;
-if(keys.left)s.a-=2*dt*(keys.down?-1:1);
-if(keys.right)s.a+=2*dt*(keys.down?-1:1);
-s.x=Math.max(20,Math.min(480,s.x+Math.sin(s.a)*speed*dt));
-s.y=Math.max(20,Math.min(480,s.y-Math.cos(s.a)*speed*dt));
-const d=Math.abs(speed*dt)/120;
-s.km+=d;
-s.fuel=Math.max(0,s.fuel-d*.8);
-
-const step=Math.floor(s.km/2);
-if(step>s.events){
-s.events=step;
-randomEvent();
+function finishLevel(){
+loopActive=false;
+s.phase='finish';
+s.xp+=100;
 save(false);
+$('finishText').textContent='Ruta '+levels[s.level].name+' completada. +100 XP. ¡Has desbloqueado el siguiente nivel!';
+show('finish');
 }
 
-if(s.level<4){
-const m=missions[s.level];
-if(Math.hypot(s.x-m[2],s.y-m[3])<38)complete();
-}
-}
-draw();
-requestAnimationFrame(loop);
+function advance(){
+s.level++;
+if(s.level>=levels.length){endGame();return;}
+s.q=0;
+s.correct=0;
+renderQuiz();
 }
 
-["up","down","left","right"].forEach(id=>{
+function endGame(){
+s.phase='end';
+save(false);
+$('endScore').textContent='Puntuación final: '+s.xp+' XP';
+show('end');
+}
+
+['left','right','gas','brake'].forEach(id=>{
 const b=$(id);
-b.addEventListener("pointerdown",e=>{
+b.addEventListener('pointerdown',e=>{
 e.preventDefault();
-keys[id]=true;
+held[id]=true;
 b.setPointerCapture(e.pointerId);
 });
-["pointerup","pointercancel","lostpointercapture"].forEach(ev=>
-b.addEventListener(ev,()=>keys[id]=false));
+['pointerup','pointercancel','lostpointercapture'].forEach(ev=>
+b.addEventListener(ev,()=>held[id]=false));
 });
-
-document.addEventListener("visibilitychange",()=>{
+document.addEventListener('visibilitychange',()=>{
 if(document.hidden){
-Object.keys(keys).forEach(k=>keys[k]=false);
+Object.keys(held).forEach(k=>held[k]=false);
 if(s)save(false);
 }
 });
-setInterval(()=>{if(s&&playing)save(false);},15000);
+setInterval(()=>{
+if(s&&s.phase==='drive')save(false);
+},12000);
 </script>
 </body>
 </html>
